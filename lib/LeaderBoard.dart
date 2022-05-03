@@ -48,15 +48,15 @@ class _LeaderBoardState extends State<LeaderBoard> {
                 shrinkWrap: true,
                 itemBuilder: (context, index) {
                   return ListTile(
-                    title: Text(snapshot.data.toString()),
+                    title: Text(snapshot.data[index]['name']),
                     leading: Text("${index + 1}"),
-                    trailing: Text("Score"),
+                    trailing: Text("Score: " + snapshot.data[index]['score'].toString()),
                   );
                 },
                 separatorBuilder: (context, index) => Divider(
                       color: Colors.black,
                     ),
-                itemCount: 20);
+                itemCount: snapshot.data.length);
           }
         },
       ),

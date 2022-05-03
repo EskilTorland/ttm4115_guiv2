@@ -54,8 +54,10 @@ class _QuizPageState extends State<QuizPage> {
 
   Future<List<QuizEntry>> getQuiz() async {
     var unescape = HtmlUnescape();
-    final response = await http.get(Uri.parse("http://localhost:5000/getQuiz"));
+    final response = await http
+        .get(Uri.parse("https://ttm4115-backend.herokuapp.com/getQuiz"));
     var responseData = json.decode(response.body);
+    print(responseData);
     List<QuizEntry> quiz = [];
     for (var singleEntry in responseData) {
       List<dynamic> dynamicEntry = singleEntry["quiz"]["answers"];
