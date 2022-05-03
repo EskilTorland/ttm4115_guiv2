@@ -17,7 +17,7 @@ class _LeaderBoardState extends State<LeaderBoard> {
   Future<List<dynamic>> getTeams() async {
     var unescape = HtmlUnescape();
     final response =
-        await http.get(Uri.parse("http://localhost:5000/getTeams"));
+        await http.get(Uri.parse("https://ttm4115-backend.herokuapp.com/getTeams"));
     var responseData = json.decode(response.body);
     print(responseData);
     return responseData;
