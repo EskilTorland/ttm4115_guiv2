@@ -33,7 +33,8 @@ class _QuizPageState extends State<QuizPage> {
   bool gameEnded = true;
   List<QuizEntry> futureQuiz = [];
 
-  void escOnPress() {
+  escOnPress() {
+    updateTeam("myteam", 7);
     Navigator.pop(context);
   }
 
@@ -41,6 +42,14 @@ class _QuizPageState extends State<QuizPage> {
     getQuiz().then((value) {
       futureQuiz = value;
     });
+  }
+
+  Future<void> updateTeam(String name, int score) {
+    return http.put(Uri.parse("http://localhost:5000/updateTeam"),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8'
+        },
+        body: jsonEncode({'name': name, 'score': score}));
   }
 
   Future<List<QuizEntry>> getQuiz() async {
