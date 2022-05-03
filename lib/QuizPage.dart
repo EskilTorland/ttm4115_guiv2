@@ -1,7 +1,26 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'AnswerBox.dart';
+import 'package:http/http.dart' as http;
+import 'package:html_unescape/html_unescape.dart';
+
+class QuizEntry {
+  final String question;
+  final List<Answers> answers;
+
+  QuizEntry({required this.question, required this.answers});
+}
+
+class Answers {
+  final String answerText;
+  final bool answerCorrect;
+
+  Answers({required this.answerText, required this.answerCorrect});
+}
 
 class QuizPage extends StatefulWidget {
   @override
@@ -12,9 +31,39 @@ class _QuizPageState extends State<QuizPage> {
   int _questionIndex = 0;
   int _totalScore = 0;
   bool gameEnded = true;
+  List<QuizEntry> futureQuiz = [];
 
   void escOnPress() {
     Navigator.pop(context);
+  }
+
+  void initState() {
+    getQuiz().then((value) {
+      futureQuiz = value;
+    });
+  }
+
+  Future<List<QuizEntry>> getQuiz() async {
+    var unescape = HtmlUnescape();
+    final response = await http.get(Uri.parse("http://localhost:5000/getQuiz"));
+    var responseData = json.decode(response.body);
+    List<QuizEntry> quiz = [];
+    for (var singleEntry in responseData) {
+      List<dynamic> dynamicEntry = singleEntry["quiz"]["answers"];
+      List<Answers> answerList = [];
+      for (int i = 0; i < dynamicEntry.length; i++) {
+        answerList.add(Answers(
+            answerText: unescape
+                .convert(singleEntry["quiz"]["answers"][i]["answerText"]),
+            answerCorrect: singleEntry["quiz"]["answers"][i]["answerCorrect"]));
+      }
+      QuizEntry quizEntry = QuizEntry(
+          question: unescape.convert(singleEntry["quiz"]["question"]),
+          answers: answerList..shuffle());
+
+      quiz.add(quizEntry);
+    }
+    return quiz;
   }
 
   void questionAnswered(bool answerCorrect) {
@@ -58,26 +107,40 @@ class _QuizPageState extends State<QuizPage> {
       body: Center(
           child: Column(
         children: [
-          Container(
-            width: MediaQuery.of(context).size.width * 0.7,
-            height: 130,
-            margin: EdgeInsets.only(bottom: 10, left: 30, right: 30, top: 30),
-            padding: EdgeInsets.symmetric(horizontal: 50, vertical: 20),
-            decoration: BoxDecoration(
-                color: Colors.deepOrange,
-                borderRadius: BorderRadius.circular(10)),
-            child: Center(
-                child: Text(
-              gameEnded
-                  ? _questions[_questionIndex]['question']
-                  : "Thank you for playing",
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                  fontSize: 20,
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold),
-            )),
-          ),
+          FutureBuilder<List<QuizEntry>>(
+              future: getQuiz(),
+              builder: (BuildContext context,
+                  AsyncSnapshot<List<QuizEntry>> snapshot) {
+                if (snapshot.data == null) {
+                  return Container(
+                    child: Center(
+                      child: CircularProgressIndicator(),
+                    ),
+                  );
+                } else {
+                  return Container(
+                    width: MediaQuery.of(context).size.width * 0.7,
+                    height: 130,
+                    margin: EdgeInsets.only(
+                        bottom: 10, left: 30, right: 30, top: 30),
+                    padding: EdgeInsets.symmetric(horizontal: 50, vertical: 20),
+                    decoration: BoxDecoration(
+                        color: Colors.deepOrange,
+                        borderRadius: BorderRadius.circular(10)),
+                    child: Center(
+                        child: Text(
+                      gameEnded
+                          ? futureQuiz[_questionIndex].question
+                          : "Thank you for playing",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                          fontSize: 20,
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold),
+                    )),
+                  );
+                }
+              }),
           Visibility(
             visible: !gameEnded,
             child: SizedBox(
@@ -87,8 +150,9 @@ class _QuizPageState extends State<QuizPage> {
                 onPressed: escOnPress,
                 child: Text(
                   "Exit",
-                  style: TextStyle(fontSize: 96,),
-                  
+                  style: TextStyle(
+                    fontSize: 96,
+                  ),
                 ),
               ),
             ),
@@ -97,14 +161,78 @@ class _QuizPageState extends State<QuizPage> {
             visible: gameEnded,
             child: Column(
               children: [
-                ...(_questions[_questionIndex]['answers']
-                        as List<Map<String, dynamic>>)
-                    .map((answer) => AnswerBox(
-                          answerText: answer['answertext'],
-                          onTap: () {
-                            questionAnswered(answer['answerCorrect']);
-                          },
-                        )),
+                FutureBuilder<List<QuizEntry>>(
+                    future: getQuiz(),
+                    builder: (
+                      BuildContext context,
+                      AsyncSnapshot<List<QuizEntry>> snapshot,
+                    ) {
+                      if (snapshot.data == null) {
+                        return Container(
+                          child: Center(
+                            child: CircularProgressIndicator(),
+                          ),
+                        );
+                      } else {
+                        return Column(
+                          children: [
+                            AnswerBox(
+                                answerText: futureQuiz[_questionIndex]
+                                    .answers[0]
+                                    .answerText,
+                                onTap: () {
+                                  questionAnswered(futureQuiz[_questionIndex]
+                                      .answers[0]
+                                      .answerCorrect);
+                                }),
+                            AnswerBox(
+                                answerText: futureQuiz[_questionIndex]
+                                    .answers[1]
+                                    .answerText,
+                                onTap: () {
+                                  questionAnswered(futureQuiz[_questionIndex]
+                                      .answers[1]
+                                      .answerCorrect);
+                                }),
+                            AnswerBox(
+                                answerText: futureQuiz[_questionIndex]
+                                    .answers[2]
+                                    .answerText,
+                                onTap: () {
+                                  questionAnswered(futureQuiz[_questionIndex]
+                                      .answers[2]
+                                      .answerCorrect);
+                                }),
+                            AnswerBox(
+                                answerText: futureQuiz[_questionIndex]
+                                    .answers[3]
+                                    .answerText,
+                                onTap: () {
+                                  questionAnswered(futureQuiz[_questionIndex]
+                                      .answers[3]
+                                      .answerCorrect);
+                                }),
+                          ],
+                        );
+                      }
+                    }),
+
+                // AnswerBox(
+                //     answerText:
+                //         futureQuiz[_questionIndex].answers[0].answerText,
+                //     onTap: () {
+                //       questionAnswered(
+                //           futureQuiz[_questionIndex].answers[0].answerCorrect);
+                //     })
+
+                // [_questionIndex]['answers']
+                //         as List<Map<String, dynamic>>)
+                //     .map((answer) => AnswerBox(
+                //           answerText: answer.answerText,
+                //           onTap: () {
+                //             questionAnswered(answer.answerCorrect);
+                //           },
+                //         )),
               ],
             ),
           ),
