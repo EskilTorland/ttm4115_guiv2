@@ -1,16 +1,21 @@
 # ttm4115_guiv2
 
-A new Flutter project.
+## This website is currently hosted at
+    (https://ttm4115-guiv2.herokuapp.com/)
 
-## Getting Started
+## How to run the app locally
+1. Download flutter on your system, you can download flutter [here](https://docs.flutter.dev/get-started/install)
+2. Enter these commands in the project directory
+ ```bash
+    flutter pub get
+ ```
+### Run in debug mode
+  ```bash
+    flutter run
+ ```
 
-This project is a starting point for a Flutter application.
+ ### Build
+ ```bash
+    flutter build <Your prefered system>
+ ```
 
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
-
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
