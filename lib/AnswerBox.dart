@@ -1,8 +1,6 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class AnswerBox extends StatelessWidget {
-  @override
   final String answerText;
   final VoidCallback onTap;
 
@@ -15,15 +13,15 @@ class AnswerBox extends StatelessWidget {
         InkWell(
           onTap: onTap,
           child: Container(
-            padding: EdgeInsets.all(15),
-            margin: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+            padding: const EdgeInsets.all(15),
+            margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
             width: MediaQuery.of(context).size.width * 0.7,
             decoration: BoxDecoration(
               border: Border.all(color: Colors.blueAccent),
               borderRadius: BorderRadius.circular(20),
             ),
             child: Text(answerText,
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 16,
                 )),
           ),
