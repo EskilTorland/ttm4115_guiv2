@@ -13,20 +13,18 @@ class LeaderBoard extends StatefulWidget {
 
 class _LeaderBoardState extends State<LeaderBoard> {
   List<dynamic> futureTeams = [];
+  final String url = "https://ttm4115-backend.herokuapp.com";
 
   Future<List<dynamic>> getTeams() async {
-    var unescape = HtmlUnescape();
-    final response =
-        await http.get(Uri.parse("https://ttm4115-backend.herokuapp.com/getTeams"));
+    final response = await http.get(Uri.parse(url + "/getTeams"));
     var responseData = json.decode(response.body);
-    print(responseData);
     return responseData;
   }
 
+  @override
   void initState() {
     getTeams().then((value) {
       futureTeams = value;
-      print(futureTeams);
     });
   }
 
@@ -39,7 +37,7 @@ class _LeaderBoardState extends State<LeaderBoard> {
         builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
           if (snapshot.data == null) {
             return Container(
-              child: Center(
+              child: const Center(
                 child: CircularProgressIndicator(),
               ),
             );
@@ -50,10 +48,11 @@ class _LeaderBoardState extends State<LeaderBoard> {
                   return ListTile(
                     title: Text(snapshot.data[index]['name']),
                     leading: Text("${index + 1}"),
-                    trailing: Text("Score: " + snapshot.data[index]['score'].toString()),
+                    trailing: Text(
+                        "Score: " + snapshot.data[index]['score'].toString()),
                   );
                 },
-                separatorBuilder: (context, index) => Divider(
+                separatorBuilder: (context, index) => const Divider(
                       color: Colors.black,
                     ),
                 itemCount: snapshot.data.length);

@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart';
 import 'LeaderBoard.dart';
 import 'QuizButtonContainer.dart';
-import 'QuizPage.dart';
-import 'package:http/http.dart' as http;
-import 'package:html_unescape/html_unescape.dart';
-import 'dart:convert';
 
 void main() {
   runApp(const MyApp());
@@ -35,14 +31,6 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
-
   Widget quizButton = (TextButton(
     style: ButtonStyle(
       foregroundColor: MaterialStateProperty.all<Color>(Colors.red),
@@ -65,7 +53,7 @@ class _MyHomePageState extends State<MyHomePage> {
           children: [
             Column(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: <Widget>[
+              children: const <Widget>[
                 QuizButtonContainer(
                   bannerText: "Quiz",
                 ),
@@ -76,7 +64,7 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
             Column(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: <Widget>[LeaderBoard(), SizedBox(width: 500)],
+              children: <Widget>[LeaderBoard(), const SizedBox(width: 500)],
             ),
           ],
         ),

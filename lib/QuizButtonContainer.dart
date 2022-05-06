@@ -18,7 +18,7 @@ class QuizButtonContainer extends StatelessWidget {
               context, MaterialPageRoute(builder: (context) => QuizPage()));
         },
         child: Container(
-            constraints: BoxConstraints(maxWidth: 400, maxHeight: 400),
+            constraints: const BoxConstraints(maxWidth: 400, maxHeight: 400),
             width: size,
             height: size,
             decoration: BoxDecoration(
@@ -29,7 +29,7 @@ class QuizButtonContainer extends StatelessWidget {
                     color: Colors.orangeAccent.withOpacity(0.5),
                     spreadRadius: 1,
                     blurRadius: 5,
-                    offset: Offset(0,5))
+                    offset: const Offset(0,5))
               ],
             ),
             child: Center(
@@ -41,10 +41,10 @@ class QuizButtonContainer extends StatelessWidget {
                         color: Colors.black.withOpacity(0.5),
                         blurRadius: 5,
                         spreadRadius: 0,
-                        offset: Offset(0, 10),
+                        offset: const Offset(0, 10),
                       )
                     ]),
-                    child: Text(
+                    child: const Text(
                       "Quiz",
                       textAlign: TextAlign.center,
                       style: TextStyle(
